@@ -1,0 +1,6 @@
+// app/views/dice/roll.js.erb
+document.getElementById('dice-result').innerHTML = '<%= j @result %>';
+document.getElementById('dice-result').classList.add('dice-rolling');
+setTimeout(() => {
+  document.getElementById('dice-result').classList.remove('dice-rolling');
+}, 1000); // Assuming the roll animation takes 1 second
