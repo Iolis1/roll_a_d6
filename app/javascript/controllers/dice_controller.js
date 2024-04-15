@@ -3,19 +3,23 @@ import { Controller } from "@hotwired/stimulus"
 import consumer from "../channels/consumer"
 
 export default class extends Controller {
+  static targets = ["result"]
+
   connect() {
-    this.channel = consumer.subscriptions.create("DiceChannel", {
+    this.subscription = consumer.subscriptions.create("DiceChannel", {
       received(data) {
-        document.getElementById('dice-result').innerHTML = data.result;
+        this.resultTarget.textContent = data.result;
       }
     });
   }
 
-  roll() {
-    this.channel.perform('roll');
+  disconnect() {
+    if (this.subscription) {
+      consumer.subscriptions.remove(this.subscription)
+    }
   }
 
-  disconnect() {
-    consumer.subscriptions.remove(this.channel)
+  roll() {
+    this.subscription.perform('roll')
   }
 }

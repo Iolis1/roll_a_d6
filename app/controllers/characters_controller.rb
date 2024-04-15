@@ -1,10 +1,11 @@
 class CharactersController < ApplicationController
-  def show
+  def new
   end
 
-  def new
+  def show
   end
 
   def edit
   end
+
 end

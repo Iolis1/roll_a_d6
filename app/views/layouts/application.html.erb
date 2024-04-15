@@ -14,12 +14,20 @@
     <p class="notice"><%= notice %></p>
     <p class="alert"><%= alert %></p>
     <div class="relative z-10">
-      <header class="bg-blue-600 text-white p-4">
+      <header class="bg-blue-600 text-white p-2">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
           <h1 class="font-bold p-5">The Dragons Den</h1>
           <nav>
             <ul class="flex space-x-4">
-              <li><%= link_to "Home", home_path, class: "hover:underline" %></li> |
+              <% if user_signed_in? %>
+                <li><%= link_to "Home", home_path, class: "hover:underline" %></li> <li></li>|
+                <li><%= link_to "Edit Profile", edit_user_registration_path, class: "hover:underline" %></li> <li></li>| 
+                <li><%= link_to 'Sign out', destroy_user_session_path, method: :delete, data: { turbo_method: :delete }, class: "hover:underline" %></li> <li></li>
+              <% else %>
+                <li><%= link_to "Home", home_path, class: "hover:underline" %></li> <li></li>|
+                <li><%= link_to "Sign Up", new_user_registration_path, class: "hover:underline" %></li> <li></li>| 
+                <li><%= link_to "Login", new_user_session_path, class: "hover:underline" %></li> <li></li>
+              <% end %>
             </ul>
           </nav>
         </div>
