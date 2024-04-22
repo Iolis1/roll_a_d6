@@ -1,4 +1,122 @@
-<div>
-  <h1 class="font-bold text-4xl">Races#show</h1>
-  <p>Find me in app/views/races/show.html.erb</p>
+<!-- app/views/races/show.html.erb -->
+<div class="container mx-auto p-8 bg-white custom-bg-opacity rounded shadow-lg mt-10 relative z-10">
+    <h1 class="text-3xl font-bold text-center mb-6">Races</h1>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 bg-blue-50 p-4 rounded">
+    <div class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+        <label for="races" class="font-bold">Races:</label>
+        <select id="races" name="races" onchange="fetchData('codex_races', this.value)" class="block w-full p-2 bg-white border border-gray-300 rounded-md">
+            <option value="">Select a Race</option>
+        </select>
+        <div id="codex_races_data" class="hidden mt-2 p-2 bg-gray-100 border rounded-md">
+
+        </div>
+    </div>
+  <div class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+        <a href="<%= url_for(:back) %>" class="block w-full p-2 bg-blue-500 text-white font-bold text-center rounded-md">Go Back</a>
+  </div>
 </div>
+
+<script>
+   document.addEventListener('DOMContentLoaded', function() {
+    populateDropdown('races', '/api/codex_races');
+  });
+
+  function populateDropdown(dropdownId, apiUrl) {
+    const dropdown = document.getElementById(dropdownId);
+    if (!dropdown) return;
+
+    fetch(apiUrl)
+      .then(response => response.json())
+      .then(data => {
+        // Clear existing options
+        dropdown.innerHTML = '<option value="">Select a Race</option>';
+        // Check if the data is an array or an object
+        let itemsArray = data.results ? data.results : data;
+        // Populate the dropdown with new options
+        itemsArray.forEach(item => {
+          const option = document.createElement('option');
+          option.value = item.index;
+          option.textContent = item.name;
+          dropdown.appendChild(option);
+        });
+      })
+      .catch(error => {
+        console.error('Error fetching data: ', error);
+      });
+  }
+
+  function fetchData(category, index) {
+    const detailsDiv = document.getElementById(`${category}_data`);
+    if (!detailsDiv) {
+      console.error(`Element with ID ${category}_data not found.`);
+      return;
+    }
+
+    if (index === "") {
+      detailsDiv.classList.add('hidden');
+      detailsDiv.innerHTML = '';
+      return;
+    }
+
+    fetch(`/api/${category}/${index}`)
+      .then(response => {
+        if (!response.ok) throw new Error(`Network response was not ok, status: ${response.status}`);
+        return response.json();
+      })
+      .then(data => {
+        detailsDiv.classList.remove('hidden');
+        const htmlContent = generateHtmlForData(data);
+        detailsDiv.innerHTML = htmlContent;
+      })
+      .catch(error => {
+        console.error('Fetch error:', error);
+        detailsDiv.innerHTML = `Error fetching data: ${error.message}`;
+    });
+  }
+  function generateHtmlForData(data) {
+  let htmlContent = '';
+  for (const key in data) {
+    if (data.hasOwnProperty(key)) {
+      // Skip URL/URI keys and others as needed
+      if (key.toLowerCase().includes('url') || key.toLowerCase().includes('uri') || key.toLowerCase().includes('index') || key.toLowerCase().includes('id')) {
+        continue;
+      }
+
+      // Check if the value exists and is not null or undefined
+      if (data[key] !== null && data[key] !== undefined) {
+        // Check if the value is an array
+        if (Array.isArray(data[key])) {
+          if (data[key].length > 0) {
+            htmlContent += `<p><strong>${key.toUpperCase()}:</strong></p>`;
+            htmlContent += '<ul>';
+            data[key].forEach(item => {
+              // Handle nested objects or arrays recursively
+              if (typeof item === 'object') {
+                htmlContent += '<li>';
+                htmlContent += generateHtmlForData(item);
+                htmlContent += '</li>';
+              } else {
+                htmlContent += `<li>${item}</li>`;
+              }
+            });
+            htmlContent += '</ul>';
+          }
+        } else if (typeof data[key] === 'object') {
+          // Check if the object has properties
+          if (Object.keys(data[key]).length > 0) {
+            // Handle nested objects recursively
+            htmlContent += `<p><strong>${key.toUpperCase()}:</strong></p>`;
+            htmlContent += generateHtmlForData(data[key]);
+          }
+        } else {
+          // Check if the value is not an empty string
+          if (data[key] !== '') {
+            htmlContent += `<p><strong>${key.toUpperCase()}:</strong> ${data[key]}</p>`;
+          }
+        }
+      }
+    }
+  }
+  return htmlContent;
+}
+</script>

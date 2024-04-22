@@ -1,3 +1,5 @@
+<!-- app/view/game_mechanics/index.html.erb -->
+
 <div class="container mx-auto p-8 bg-white custom-bg-opacity rounded shadow-lg mt-10 relative z-10">
   <h1 class="text-3xl font-bold text-center mb-6">Game Mechanics</h1>
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 bg-blue-50 p-4 rounded">
@@ -25,7 +27,7 @@
         <option value="<%= type %>"><%= type.humanize.titleize %></option>
       <% end %>
     </select>
-    <div id="damage_type_data" class="hidden mt-2 p-2 bg-gray-100 border rounded-md">
+    <div id="damage_types_data" class="hidden mt-2 p-2 bg-gray-100 border rounded-md">
       <!-- Fetched data will appear here -->
     </div>
   </div>
@@ -44,41 +46,60 @@
     </div>
   </div>
 
+  <!-- Go Back Button -->
+  <div class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+    <a href="<%= url_for(:back) %>" class="block w-full p-2 bg-blue-500 text-white font-bold text-center rounded-md">Go Back</a>
+  </div>
+</div>
+
   
 <script>
   function fetchData(category, index) {
     if (index === "") {
-      document.getElementById(`${category}_data`).innerHTML = '';
       document.getElementById(`${category}_data`).classList.add('hidden');
+      document.getElementById(`${category}_data`).innerHTML = '';
       return;
     }
 
     fetch(`/api/${category}/${index}`)
       .then(response => {
-        if (!response.ok) throw new Error('Network response was not ok');
+        if (!response.ok) throw new Error(`Network response was not ok, status: ${response.status}`);
         return response.json();
       })
       .then(data => {
-        document.getElementById(`${category}_data`).classList.remove('hidden');
+        const dataDiv = document.getElementById(`${category}_data`);
+        if (!dataDiv) {
+          console.error(`Element with ID ${category}_data not found.`);
+          return; // Exit early if the element is not found
+        }
+        dataDiv.classList.remove('hidden');
         const htmlContent = generateHtmlForData(data);
-        document.getElementById(`${category}_data`).innerHTML = htmlContent;
+        dataDiv.innerHTML = htmlContent;
       })
       .catch(error => {
         console.error('Fetch error:', error);
-        document.getElementById(`${category}_data`).innerHTML = 'Error fetching data.';
-      });
+        document.getElementById(`${category}_data`).innerHTML = `Error fetching data: ${error.message}`;
+    });
   }
 
-  function generateHtmlForData(data){
+  function generateHtmlForData(data) {
     let html = '<div class="bg-white bg-opacity-75 p-4 shadow rounded-lg">';
+    html += `<h2 class="text-xl font-bold">${data.name || 'No name provided'}</h2>`;
 
-    html += `<h2 class="text-xl font-bold">${data.name}</h2>`;
-
-    if (data.desc) {
+    // Handle description as either array or single string
+    if (Array.isArray(data.desc)) {
       data.desc.forEach(paragraph => {
         html += `<p class="mt-2 text-gray-600">${paragraph}</p>`;
       });
+    } else if (data.desc) {
+      html += `<p class="mt-2 text-gray-600">${data.desc}</p>`;
+    } else {
+      html += `<p class="mt-2 text-gray-600">No description available.</p>`;
     }
+
+    html += '</div>';
+    return html;
   }
+
 </script>
 

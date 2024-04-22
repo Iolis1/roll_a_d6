@@ -3,7 +3,11 @@ class MonstersController < ApplicationController
   end
   
   def monsters
-    @Monsters = DndApiService.fetch("monsters/#{params[:index]}")
+    if params[:index].present?
+      @Monsters = DndApiService.fetch("monsters/#{params[:index]}")
+    else
+      @Monsters = DndApiService.fetch("monsters")
+    end
     render json: @Monsters
   end
 end

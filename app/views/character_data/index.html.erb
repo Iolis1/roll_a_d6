@@ -87,6 +87,11 @@
         <!-- Fetched data will appear here -->
       </div>
     </div>
+
+    <!-- Go Back Button-->
+    <div class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+      <a href="<%= url_for(:back) %>" class="block w-full p-2 bg-blue-500 text-white font-bold text-center rounded-md">Go Back</a>
+    </div>
   </div>
 </div>
 
@@ -115,92 +120,49 @@
   }
 
   function generateHtmlForData(data) {
-    let html = '<div class="bg-white bg-opacity-75 p-4 shadow rounded-lg">';
+  let htmlContent = '';
+  for (const key in data) {
+    if (data.hasOwnProperty(key)) {
+      // Skip URL/URI keys and others as needed
+      if (key.toLowerCase().includes('url') || key.toLowerCase().includes('uri') || key.toLowerCase().includes('index') || key.toLowerCase().includes('id')) {
+        continue;
+      }
 
-    html += data.full_name ? `<h2 class="text-xl font-bold">${data.full_name}</h2>` : `<h2 class="text-xl font-bold">${data.name}</h2>`;
-    
-    if (data.desc) {
-      data.desc.forEach(paragraph => {
-        html += `<p class="mt-2 text-gray-600">${paragraph}</p>`;
-      });
+      // Check if the value exists and is not null or undefined
+      if (data[key] !== null && data[key] !== undefined) {
+        // Check if the value is an array
+        if (Array.isArray(data[key])) {
+          if (data[key].length > 0) {
+            htmlContent += `<p><strong>${key.toUpperCase()}:</strong></p>`;
+            htmlContent += '<ul>';
+            data[key].forEach(item => {
+              // Handle nested objects or arrays recursively
+              if (typeof item === 'object') {
+                htmlContent += '<li>';
+                htmlContent += generateHtmlForData(item);
+                htmlContent += '</li>';
+              } else {
+                htmlContent += `<li>${item}</li>`;
+              }
+            });
+            htmlContent += '</ul>';
+          }
+        } else if (typeof data[key] === 'object') {
+          // Check if the object has properties
+          if (Object.keys(data[key]).length > 0) {
+            // Handle nested objects recursively
+            htmlContent += `<p><strong>${key.toUpperCase()}:</strong></p>`;
+            htmlContent += generateHtmlForData(data[key]);
+          }
+        } else {
+          // Check if the value is not an empty string
+          if (data[key] !== '') {
+            htmlContent += `<p><strong>${key.toUpperCase()}:</strong> ${data[key]}</p>`;
+          }
+        }
+      }
     }
-
-    if (data.skills) {
-      html += '<div class="mt-4"><h3 class="font-semibold">Skills:</h3><ul class="list-disc list-inside">';
-      data.skills.forEach(skill => {
-        html += `<li>${skill.name}</li>`;
-      });
-      html += '</ul></div>';
-    }
-
-    if (data.type){
-      html += `<p>Type: ${data.type}</p>`;
-    }
-    
-    if (data.script){
-      html += `<p class="mt-2 text-gray-600">Script: ${data.script}</p>`;
-    }
-    if (data.typical_speakers){
-      html += `<p class="mt-2 text-gray-600">Typical Speakers: ${data.typical_speakers}</p>`;
-    }
-    if (data.starting_proficiencies){
-      data.starting_proficiencies.forEach(proficiency => {
-        html += `<h3 class="font-semibold">Starting Proficiencies: ${proficiency.name}</h3>`;
-      });
-    }
-
-if (data.personality_traits?.from?.options) {
-      html += '<div class="mt-4"><h3 class="font-semibold">Personality Traits:</h3><ul class="list-disc list-inside">';
-      data.personality_traits.from.options.forEach(trait => {
-        html += `<li>${trait.string}</li>`;
-      });
-      html += '</ul></div>';
-    }
-
-
-    if (data.ideals?.from?.options) {
-      html += '<div class="mt-4"><h3 class="font-semibold">Ideals:</h3><ul class="list-disc list-inside">';
-      data.ideals.from.options.forEach(ideal => {
-        html += `<li>${ideal.desc} (Alignments: ${ideal.alignments.map(a => a.name).join(', ')})</li>`;
-      });
-      html += '</ul></div>';
-    }
-
-    if (data.bonds?.from?.options) {
-      html += '<div class="mt-4"><h3 class="font-semibold">Bonds:</h3><ul class="list-disc list-inside">';
-      data.bonds.from.options.forEach(bond => {
-        html += `<li>${bond.string}</li>`;
-      });
-      html += '</ul></div>';
-    }
-
-    if (data.flaws?.from?.options) {
-      html += '<div class="mt-4"><h3 class="font-semibold">Flaws:</h3><ul class="list-disc list-inside">';
-      data.flaws.from.options.forEach(flaw => {
-        html += `<li>${flaw.string}</li>`;
-      });
-      html += '</ul></div>';
-    }
-
-
-    if (data.starting_equipment_options){
-      data.starting_equipment_options.forEach(option => {
-        html += `<h3 class="font-semibold">Starting Equipment Options: ${option.choose}</h3>`;
-      });
-    }
-    if (data.classes){
-      data.classes.forEach(classes => {
-        html += `<h3 class="font-semibold">Classes: ${classes.name}</h3>`;
-      });
-    }
-    if (data.races){
-      data.races.forEach(races => {
-        html += `<h3 class="font-semibold">Races: ${races.name}</h3>`;
-      });
-    }
-    if (data.abbreviation){
-      html += `<p class="mt-2 text-gray-600">Abbreviation: ${data.abbreviation}</p>`;
-    }
-    return html;
   }
+  return htmlContent;
+}
 </script>

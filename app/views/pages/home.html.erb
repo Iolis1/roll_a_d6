@@ -1,24 +1,19 @@
 
-<div class="container mx-auto p-8">
-  <h1 class="text-center text-4xl font-bold mb-6">Welcome to the Dungeon</h1>
-  <p class="text-center text-lg mb-4">Your ultimate companion for D&D campaigns.</p>
+<div class="container bg-opaque mx-auto p-8">
+  <h1 class="text-center text-4xl font-bold mb-6">Welcome, Traveler!</h1>
+  <p class="text-center font-bold text-sm mb-4">Beyond the mist and the ancient oaks of the Eldritch Forest, you’ve stumbled upon the gateway to realms both wondrous and perilous. Here lies the threshold to adventures untold and legends yet to be forged by heroes brave and bold. Whether you're a seasoned adventurer or a scribe with an insatiable curiosity, this sanctum welcomes all.
+
+Are you here to forge your destiny? Embark on your journey by creating your character, an avatar of your own design, ready to conquer quests and uncover secrets in worlds far and near.
+
+Or perhaps, you are one to prefer the warmth of the hearth? Then, fellow lore seeker, draw near the flickering Codex, where the tales of a thousand heroes await to unfold, offering knowledge of ancient magics, fearsome creatures, and the myriad lands that beckon under starlit skies.
+
+Choose your path wisely, for great stories await both the blade-wielder and the scholar.</p>
   
   <div class="flex justify-center space-x-4">
     <%= link_to 'Create a Character', new_character_path, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
     <%= link_to 'Visit the D&D Codex', codex_index_path, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
   </div>
 
-
-  <div class="mt-8">
-    <h2 class="text-center text-2xl font-semibold mb-3">Features:</h2>
-    <ul class="list-disc list-inside text-center">
-      <li>Comprehensive Character Creation</li>
-      <li>Interactive Inventory Management</li>
-      <li>Dynamic Stat Sheets</li>
-      <li>Virtual Dice Rolling</li>
-      <!-- Add more features as needed -->
-    </ul>
-  </div>
 
   <footer class="text-center mt-16">
     <small>&copy; <%= Time.current.year %> RollAD6. All rights reserved.</small>

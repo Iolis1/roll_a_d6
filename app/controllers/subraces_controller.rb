@@ -3,7 +3,11 @@ class SubracesController < ApplicationController
   end
 
   def subraces
-    @Subraces = DndApiService.fetch("subraces/#{params[:index]}")
+    if params[:index].present?
+      @Subraces = DndApiService.fetch("subraces/#{params[:index]}")
+    else
+      @Subraces = DndApiService.fetch("subraces")
+    end
     render json: @Subraces
   end
 end

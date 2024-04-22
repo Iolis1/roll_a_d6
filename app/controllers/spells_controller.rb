@@ -3,7 +3,11 @@ class SpellsController < ApplicationController
   end
   
   def spells
-    @spell = DndApiService.fetch("spells/#{params[:index]}")
+    if params[:index].present?
+      @spell = DndApiService.fetch("spells/#{params[:index]}")
+    else
+      @spell = DndApiService.fetch("spells")
+    end
     render json: @spell
   end
 end

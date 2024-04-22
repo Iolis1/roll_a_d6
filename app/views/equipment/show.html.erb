@@ -1,4 +1,179 @@
-<div>
-  <h1 class="font-bold text-4xl">Equipment#show</h1>
-  <p>Find me in app/views/equipment/show.html.erb</p>
+<!-- app/views/equipment/show.html.erb -->
+
+<div class="container mx-auto p-8 bg-white custom-bg-opacity rounded shadow-lg mt-10 relative z-10">
+  <h1 class="text-3xl font-bold text-center mb-6">Equipment</h1>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 bg-blue-50 p-4 rounded">
+  
+    <!-- Equipment Dropdown -->
+    <div class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+      <label for="equipment" class="font-bold">Equipment:</label>
+      <select id="equipment" name="equipment" onchange="fetchData('equipment', this.value)" class="block w-full p-2 bg-white border border-gray-300 rounded-md">
+        <option value="">Select an Equipment</option>
+        <!-- Options will populate here -->
+      </select>
+      <div id="equipment_data" class="hidden mt-2 p-2 bg-gray-100 border rounded-md">
+        <!-- Fetched data will appear here -->
+      </div>
+    </div>
+    <!-- Equipment Category Dropdown -->
+    <div class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+      <label for="equipment_categories" class="font-bold">Equipment Category:</label>
+      <select id="equipment_categories" name="equipment_categories" onchange="fetchData('equipment_categories', this.value)" class="block w-full p-2 bg-white border border-gray-300 rounded-md">
+        <option value="">Select an Equipment Category</option>
+        <!-- Options will populate here -->
+      </select>
+      <div id="equipment_categories_data" class="hidden mt-2 p-2 bg-gray-100 border rounded-md">
+        <!-- Fetched data will appear here -->
+      </div>
+    </div>
+
+    <!-- Magic Items Dropdown -->
+    <div class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+      <label for="magic_items" class="font-bold">Magic Item:</label>
+      <select id="magic_items" name="magic_item" onchange="fetchData('magic_items', this.value)" class="block w-full p-2 bg-white border border-gray-300 rounded-md">
+        <option value="">Select a Magic Item</option>
+        <!-- Options will populate here -->
+      </select>
+      <div id="magic_items_data" class="hidden mt-2 p-2 bg-gray-100 border rounded-md">
+        <!-- Fetched data will appear here -->
+      </div>
+    </div>
+
+    <!-- Weapon Properties Dropdown -->
+    <div class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+      <label for="weapon_properties" class="font-bold">Weapon Property:</label>
+      <select id="weapon_properties" name="weapon_properties" onchange="fetchData('weapon_properties', this.value)" class="block w-full p-2 bg-white border border-gray-300 rounded-md">
+        <option value="">Select a Weapon Property</option>
+        <!-- Options will populate here -->
+      </select>
+      <div id="weapon_properties_data" class="hidden mt-2 p-2 bg-gray-100 border rounded-md">
+        <!-- Fetched data will appear here -->
+      </div>
+    </div>
+    
+    <!-- Go Back Button -->
+    <div class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+      <a href="<%= url_for(:back) %>" class="block w-full p-2 bg-blue-500 text-white font-bold text-center rounded-md">Go Back</a>
+    </div>
+  </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    populateDropdown('equipment_categories', '/api/equipment_categories');
+    populateDropdown('magic_items', '/api/magic_items');
+    populateDropdown('weapon_properties', '/api/weapon_properties');
+    populateDropdown('equipment', '/api/equipment');
+  });
+
+  function populateDropdown(dropdownId, apiUrl) {
+    const dropdown = document.getElementById(dropdownId);
+    if (!dropdown) return;
+
+    fetch(apiUrl)
+      .then(response => response.json())
+      .then(data => {
+        // Clear existing options
+        dropdown.innerHTML = '<option value="">Select an option</option>';
+        // Check if the data is an array or an object
+        let itemsArray = data.results ? data.results : data;
+        // Populate the dropdown with new options
+        itemsArray.forEach(item => {
+          const option = document.createElement('option');
+          option.value = item.index;
+          option.textContent = item.name;
+          dropdown.appendChild(option);
+        });
+      })
+      .catch(error => {
+        console.error('Error fetching data: ', error);
+      });
+  }
+
+  function fetchData(category, index) {
+    const detailsDiv = document.getElementById(`${category}_data`);
+    if (!detailsDiv) {
+      console.error(`Element with ID ${category}_data not found.`);
+      return;
+    }
+
+    if (index === "") {
+      detailsDiv.classList.add('hidden');
+      detailsDiv.innerHTML = '';
+      return;
+    }
+
+    fetch(`/api/${category}/${index}`)
+      .then(response => {
+        if (!response.ok) throw new Error(`Network response was not ok, status: ${response.status}`);
+        return response.json();
+      })
+      .then(data => {
+        detailsDiv.classList.remove('hidden');
+        const htmlContent = generateHtmlForData(data);
+        detailsDiv.innerHTML = htmlContent;
+      })
+      .catch(error => {
+        console.error('Fetch error:', error);
+        detailsDiv.innerHTML = `Error fetching data: ${error.message}`;
+    });
+  }
+
+  function generateHtmlForData(data) {
+    let html = '<div class="bg-white bg-opacity-75 p-4 shadow rounded-lg">';
+    html += `<h2 class="text-xl font-bold">${data.name || 'No name provided'}</h2>`;
+
+    // Handle description as either array or single string
+    if (Array.isArray(data.desc)) {
+      data.desc.forEach(paragraph => {
+        html += `<p class="mt-2 text-gray-600">${paragraph}</p>`;
+      });
+    } else if (data.desc) {
+      html += `<p class="mt-2 text-gray-600">${data.desc}</p>`;
+    } else {
+      html += `<p class="mt-2 text-gray-600">No description available.</p>`;
+    }
+
+    if (Array.isArray(data.equipment)){
+      html += '<div class="mt-4"><h3 class="font-semibold">Equipment:</h3><ul class="list-disc list-inside">';
+      data.equipment.forEach(equipment => {
+        html += `<li>${equipment.name}</li>`;
+      });
+      html += '</ul></div>';
+    }else if(data.equipment){
+      html += `<div class="mt-4"><h3 class="font-semibold">Equipment:</h3><p>${data.equipment.name}</p></div>`;
+    }
+
+    if (Array.isArray(data.equipment_category)){
+      html += '<div class="mt-4"><h3 class="font-semibold">Equipment Category:</h3><ul class="list-disc list-inside">';
+      data.equipment_category.forEach(equipment_category => {
+        html += `<li>${equipment_category.name}</li>`;
+      });
+      html += '</ul></div>';
+    }else if(data.equipment_category){
+      html += `<div class="mt-4"><h3 class="font-semibold">Equipment Category:</h3><p>${data.equipment_category.name}</p></div>`;
+    }
+
+    if (data.rarity){
+      html += `<div class="mt-4"><h3 class="font-semibold">Rarity:</h3></div>`;
+      if (Array.isArray(data.name)){
+        html += '<ul class="list-disc list-inside">';
+        data.rarity.forEach(rarity => {
+          html += `<li>${rarity.name}</li>`;
+        });
+        html += '</ul>';
+    }else{
+      html += `<p>${data.rarity.name}</p>`;
+    }
+    }
+    if(Array.isArray(data.variant)){
+      html += `<div class="mt-4"><h3 class="font-semibold">Variant:</h3><p>${data.variant.name}</p></div>`;
+    }else if(data.variant){
+      html += `<div class="mt-4"><h3 class="font-semibold">Variant:</h3><p>${data.variant.name}</p></div>`;
+    }
+
+    html += '</div>';
+    return html;
+  }
+
+</script>

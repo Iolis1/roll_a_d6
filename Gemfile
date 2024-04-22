@@ -69,4 +69,7 @@ group :test do
   gem "selenium-webdriver"
 end
 
+gem 'prawn'
+gem 'combine_pdf'
+
 gem "devise", "~> 4.9"

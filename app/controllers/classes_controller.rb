@@ -1,8 +1,12 @@
 class ClassesController < ApplicationController
   def show
   end
-  def classes
-    @classes = DndApiService.fetch("classes/#{params[:index]}")
+  def codex_classes
+    if params[:index].present?
+      @classes = DndApiService.fetch("classes/#{params[:index]}")
+    else
+      @classes = DndApiService.fetch("classes")
+    end
     render json: @classes
   end
 end

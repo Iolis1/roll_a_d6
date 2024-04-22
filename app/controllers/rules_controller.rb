@@ -3,7 +3,11 @@ class RulesController < ApplicationController
   end
   
   def rules
-    @rules = DndApiService.fetch("rule-sections/#{params[:index]}")
+    if params[:index].present?
+      @rules = DndApiService.fetch("rule-sections/#{params[:index]}")
+    else
+      @rules = DndApiService.fetch("rule-sections")
+    end
     render json: @rules
   end
 end

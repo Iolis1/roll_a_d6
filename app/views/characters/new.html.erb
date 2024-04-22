@@ -1,36 +1,238 @@
 <!-- app/views/characters/new.html.erb -->
 
-<%= form_with model: @character, local: true, class: "bg-yellow-100 p-8 rounded shadow-lg max-w-4xl mx-auto my-10" do |form| %>
-  <h2 class="text-xl font-bold mb-5 text-center">Create Your Character</h2>
-
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-    <!-- Race Dropdown -->
-    <div class="form-group">
-      <%= form.label :race_id, "Choose your race:", class: "block text-lg font-semibold" %>
-      <%= form.collection_select :race_id, @races, :id, :name, { prompt: "Select Race" }, { class: "form-select block w-full mt-1" } %>
+<div class="container mx-auto p-8 bg-white custom-bg-opacity rounded shadow-lg mt-10 relative z-10">
+  <h1 class="text-3xl font-bold text-center mb-6">Character Creation</h1>
+  
+  <!-- Character Creation Form -->
+  <form id="characterForm" action="<%= characters_path %>" method="post" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+  <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+    <!-- Character Name -->
+    <div class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+      <label for="characterName" class="font-bold">Name:</label>
+      <input type="text" id="characterName" name="characterName" class="block w-full p-2 bg-white border border-gray-300 rounded-md">
+    </div>
+    
+    <!-- Character Race -->
+    <div class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+      <label for="characterRace" class="font-bold">Race:</label>
+      <select id="characterRace" name="characterRace" class="block w-full p-2 bg-white border border-gray-300 rounded-md">
+        <option value="">Select a Race</option>
+        <% if @races.is_a?(Hash) && @races.key?('results') %>
+          <% @races['results'].each do |race| %>
+            <option value="<%= race['index'] %>"><%= race['name'] %></option>
+          <% end %>
+        <% elsif @races.is_a?(Array) %>
+          <% @races.each do |race| %>
+            <option value="<%= race['index'] %>"><%= race['name'] %></option>
+          <% end %>
+        <% else %>
+          <option>Error loading races</option>
+        <% end %>
+      </select>
     </div>
 
-    <!-- Class Dropdown -->
-    <div class="form-group">
-      <%= form.label :class_id, "Choose your class:", class: "block text-lg font-semibold" %>
-      <%= form.collection_select :class_id, @classes, :id, :name, { prompt: "Select Class" }, { class: "form-select block w-full mt-1" } %>
+    <!-- Character Class -->
+    <div class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+      <label for="characterClass" class="font-bold">Class:</label>
+      <select id="characterClass" name="characterClass" class="block w-full p-2 bg-white border border-gray-300 rounded-md">
+        <option value="">Select a Class</option>
+        <% if @classes.is_a?(Hash) && @classes.key?('results') %>
+          <% @classes['results'].each do |klass| %>
+            <option value="<%= klass['index'] %>"><%= klass['name'] %></option>
+          <% end %>
+        <% elsif @classes.is_a?(Array) %>
+          <% @classes.each do |race| %>
+            <option value="<%= klass['index'] %>"><%= klass['name'] %></option>
+          <% end %>
+        <% else %>
+          <option>Error loading class</option>
+        <% end %>
+      </select>
     </div>
-  </div>
 
-  <div class="form-group">
-    <%= form.label :level, "Level:", class: "block text-lg font-semibold" %>
-    <%= form.number_field :level, min: 1, max: 20, class: "form-input mt-1 block w-full" %>
-  </div>
-
-  <!-- Stats Section -->
-  <% ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'].each do |stat| %>
-    <div class="form-group">
-      <%= form.label stat, stat.capitalize + ":", class: "block text-lg font-semibold" %>
-      <%= form.number_field stat, min: 1, max: 30, class: "form-input mt-1 block w-full" %>
+    
+    <div class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+      <label for="character_strength" class="font-bold">Strength:</label>
+      <input type="number" name="character[strength]" id="character_strength" value="15" min="0" max="20" class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
     </div>
-  <% end %>
+    <div class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+      <label for="character_dexterity" class="font-bold">Dexterity:</label>
+      <input type="number" name="character[dexterity]" id="character_dexterity" value="14"  min="0" max="20" class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+    </div>
+    <div class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+      <label for="character_constitution" class="font-bold">Constitution:</label>
+      <input type="number" name="character[constitution]" id="character_constitution" value="13"  min="0" max="20" class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+    </div>
+    <div class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+      <label for="character_intelligence" class="font-bold">Intelligence:</label>
+      <input type="number" name="character[intelligence]" id="character_intelligence" value="12"  min="0" max="20" class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+    </div>
+    <div class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+      <label for="character_wisdom" class="font-bold">Wisdom:</label>
+      <input type="number" name="character[wisdom]" id="character_wisdom" value="10"  min="0" max="20" class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+    </div>
+    <div class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+      <label for="character_charisma" class="font-bold">Charisma:</label>
+      <input type="number" name="character[charisma]" id="character_charisma" value="8" min="0" max="20" class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+    </div>
 
-  <div class="text-center mt-6">
-    <%= form.submit "Create Character", class: "btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
-  </div>
-<% end %>
+    <!-- Submit Button -->
+    <div class="col-span-full">
+      <button type="submit" class="block w-full p-2 bg-blue-500 text-white font-bold rounded-md">Create Character</button>
+    </div>
+
+    <% if @character.errors.any? %>
+      <div id="error_explanation">
+        <h2><%= pluralize(@character.errors.count, "error") %> prohibited this character from being saved:</h2>
+        <ul>
+        <% @character.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+        </ul>
+      </div>
+    <% end %>
+    
+    <!-- Back Button -->
+    <div class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+      <a href="<%= url_for(:back) %>" class="block w-full p-2 bg-blue-500 text-white font-bold text-center rounded-md">Go Back</a>
+    </div>
+
+  </form>
+</div>
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function() {
+  populateDropdown('classes', '/api/classes');
+  populateDropdown('races', '/api/races');
+});
+
+  function populateDropdown(dropdownId, apiUrl) {
+    const dropdown = document.getElementById(dropdownId);
+    if (!dropdown) return;
+
+    fetch(apiUrl)
+      .then(response => response.json())
+      .then(data => {
+        // Clear existing options
+        dropdown.innerHTML = '<option value="">Select a Class</option>';
+        // Check if the data is an array or an object
+        let itemsArray = data.results ? data.results : data;
+        // Populate the dropdown with new options
+        itemsArray.forEach(item => {
+          const option = document.createElement('option');
+          option.value = item.index;
+          option.textContent = item.name;
+          dropdown.appendChild(option);
+        });
+      })
+      .catch(error => {
+        console.error('Error fetching data: ', error);
+      });
+  }
+
+  function fetchData(category, index) {
+    const detailsDiv = document.getElementById(`${category}_data`);
+    if (!detailsDiv) {
+      console.error(`Element with ID ${category}_data not found.`);
+      return;
+    }
+
+    if (index === "") {
+      detailsDiv.classList.add('hidden');
+      detailsDiv.innerHTML = '';
+      return;
+    }
+
+    fetch(`/api/${category}/${index}`)
+      .then(response => {
+        if (!response.ok) throw new Error(`Network response was not ok, status: ${response.status}`);
+        return response.json();
+      })
+      .then(data => {
+        detailsDiv.classList.remove('hidden');
+        const htmlContent = generateHtmlForData(data);
+        detailsDiv.innerHTML = htmlContent;
+      })
+      .catch(error => {
+        console.error('Fetch error:', error);
+        detailsDiv.innerHTML = `Error fetching data: ${error.message}`;
+    });
+  }
+
+function fetchData(category, index) {
+  const detailsDiv = document.getElementById(`${category}_data`);
+  if (!detailsDiv) {
+    console.error(`Element with ID ${category}_data not found.`);
+    return;
+  }
+
+  if (index === "") {
+    detailsDiv.classList.add('hidden');
+    detailsDiv.innerHTML = '';
+    return;
+  }
+
+  fetch(`/api/${category}/${index}`)
+    .then(response => {
+      if (!response.ok) throw new Error(`Network response was not ok, status: ${response.status}`);
+      return response.json();
+    })
+    .then(data => {
+      detailsDiv.classList.remove('hidden');
+      const htmlContent = generateHtmlForData(data);
+      detailsDiv.innerHTML = htmlContent;
+
+      populateStats(data);
+    })
+    .catch(error => {
+      console.error('Fetch error:', error);
+      detailsDiv.innerHTML = `Error fetching data: ${error.message}`;
+  });
+}
+
+function populateStats(classData) {
+  
+  const startingStats = calculateStartingStats(classData);
+
+  const statsDiv = document.getElementById('characterStats');
+  if (!statsDiv) {
+    console.error('Element with ID characterStats not found.');
+    return;
+  }
+
+  let htmlContent = '<h2 class="text-lg font-bold mb-2">Starting Stats:</h2>';
+  htmlContent += '<ul>';
+  for (const stat in startingStats) {
+    htmlContent += `<li><strong>${stat}:</strong> ${startingStats[stat]}</li>`;
+  }
+  htmlContent += '</ul>';
+
+  statsDiv.innerHTML = htmlContent;
+}
+
+function calculateStartingStats(classData) {
+
+  const startingStats = {
+    strength: 10,
+    dexterity: 10,
+    constitution: 10,
+    intelligence: 10,
+    wisdom: 10,
+    charisma: 10
+  };
+
+  return startingStats;
+}
+
+function populateCharacterForm(startingStats) {
+  // Implement logic to populate the character creation form with starting stats
+  // This will depend on the structure of your form and how you want to display the stats
+  // You'll need to select the appropriate form elements and set their values accordingly
+  // For example:
+  document.getElementById('strengthInput').value = startingStats.strength;
+  document.getElementById('dexterityInput').value = startingStats.dexterity;
+  // Repeat for other stats...
+}
+
+</script>

@@ -3,7 +3,11 @@ class FeaturesController < ApplicationController
   end
   
   def features
-    @features = DndApiService.fetch("features/#{params[:index]}")
+    if params[:index].present?
+      @features = DndApiService.fetch("features/#{params[:index]}")
+    else
+      @features = DndApiService.fetch("features")
+    end
     render json: @features
   end
 end

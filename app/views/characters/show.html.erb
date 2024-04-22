@@ -1,4 +1,30 @@
-<div>
-  <h1 class="font-bold text-4xl">Characters#show</h1>
-  <p>Find me in app/views/characters/show.html.erb</p>
+<!-- app/views/characters/show.html.erb -->
+<div class="container mx-auto p-8 bg-white custom-bg-opacity rounded shadow-lg mt-10 relative z-10">
+  <h1 class="text-3xl font-bold text-center mb-6"><%= @character.name %> - Character Profile</h1>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div class="col-span-full md:col-span-1 bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+      <h2 class="text-lg font-bold">Basic Information</h2>
+      <p><strong>Race:</strong> <%= @character.race %></p>
+      <p><strong>Class:</strong> <%= @character.class_name %></p> <!-- Make sure this matches the database field -->
+    </div>
+
+    <!-- Example attributes section, adjust field names as needed -->
+    <div class="col-span-full md:col-span-2 bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+      <h2 class="text-lg font-bold">Attributes</h2>
+      <p><strong>Strength:</strong> <%= @character.strength %></p>
+      <p><strong>Dexterity:</strong> <%= @character.dexterity %></p>
+      <p><strong>Constitution:</strong> <%= @character.constitution %></p>
+      <p><strong>Intelligence:</strong> <%= @character.intelligence %></p>
+      <p><strong>Wisdom:</strong> <%= @character.wisdom %></p>
+      <p><strong>Charisma:</strong> <%= @character.charisma %></p>
+    </div>
+  </div>
+
+  <div class="text-center mt-6">
+    <a href="<%= edit_character_path(@character) %>" class="btn btn-primary">Edit Character</a>
+    <a href="<%= characters_path %>" class="btn btn-secondary">Back to List</a>
+  </div>
 </div>
+
+<%= link_to 'Download Character Sheet', download_character_sheet_character_path(@character), class: 'btn btn-info' %>
