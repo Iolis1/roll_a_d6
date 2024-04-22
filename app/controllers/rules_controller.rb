@@ -1,5 +1,9 @@
 class RulesController < ApplicationController
   def show
-    @rule = DndApiService.fetch("rule-sections/#{params[:index]}")
+  end
+  
+  def rules
+    @rules = DndApiService.fetch("rule-sections/#{params[:index]}")
+    render json: @rules
   end
 end

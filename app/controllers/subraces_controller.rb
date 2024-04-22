@@ -1,5 +1,9 @@
 class SubracesController < ApplicationController
   def show
-    @subrace = DndApiService.fetch("subraces/#{params[:index]}")
+  end
+
+  def subraces
+    @Subraces = DndApiService.fetch("subraces/#{params[:index]}")
+    render json: @Subraces
   end
 end

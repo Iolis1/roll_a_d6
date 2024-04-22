@@ -7,3 +7,14 @@
     background-position: center;
     opacity: 0.5;
 }
+
+.custom-bg-opacity {
+    background-color: rgba(255, 255, 255, 0.6); 
+  }
+.parchment {
+    background-color: #fdf8e1; /* Light parchment color */
+    color: #5a4b32; /* Dark ink color */
+    border: 1px solid #d2bba0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  

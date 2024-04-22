@@ -1,14 +1,39 @@
-# app/controllers/character_data_controller.rb
+
 class CharacterDataController < ApplicationController
-  def show
-    data_type = params[:data_type]
-    index = params[:index]
-    valid_types = %w[ability-scores skills alignments backgrounds languages proficiencies]
-    if valid_types.include?(data_type)
-      @data = DndApiService.fetch("#{data_type}/#{params[:index]}")
-      @data_type = data_type.gsub('-', ' ').capitalize
-    else
-      redirect_to codex_index_path, alert: "Invalid data type requested"
-    end
+
+  def index
+    # This method will render the main Character Data page with dropdowns
   end
+
+  # Methods to fetch data for each subcategory
+  def ability_scores
+    @ability_scores = DndApiService.fetch("ability-scores/#{params[:index]}")
+    render json: @ability_scores
+  end
+
+  def skills
+    @skills = DndApiService.fetch("skills/#{params[:index]}")
+    render json: @skills
+  end
+
+  def languages
+    @languages = DndApiService.fetch("languages/#{params[:index]}")
+    render json: @languages
+  end
+
+  def proficiencies
+    @proficiencies = DndApiService.fetch("proficiencies/#{params[:index]}")
+    render json: @proficiencies
+  end
+
+  def alignments
+    @alignments = DndApiService.fetch("alignments/#{params[:index]}")
+    render json: @alignments
+  end
+
+  def backgrounds
+    @backgrounds = DndApiService.fetch("backgrounds/#{params[:index]}")
+    render json: @backgrounds
+  end
+
 end

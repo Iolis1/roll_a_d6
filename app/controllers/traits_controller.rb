@@ -1,5 +1,9 @@
 class TraitsController < ApplicationController
   def show
-    @trait = DndApiService.fetch("traits/#{params[:index]}")
+  end
+
+  def traits
+    @traits = DndApiService.fetch("traits/#{params[:index]}")
+    render json: @traits
   end
 end

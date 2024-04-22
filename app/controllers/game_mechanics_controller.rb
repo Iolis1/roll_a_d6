@@ -1,22 +1,20 @@
 class GameMechanicsController < ApplicationController
-  before_action :set_api_service
-
-  def magic_school
-    @magic_school = @api_service.fetch("magic-schools/#{params[:index]}")
+  def index
   end
 
-  def damage_type
-    @damage_type = @api_service.fetch("damage-types/#{params[:index]}")
+  def magic_schools
+    @magic_schools = DndApiService.fetch("magic-schools/#{params[:index]}")
+    render json: @magic_schools
+
   end
 
-  def condition
-    @condition = @api_service.fetch("conditions/#{params[:index]}")
+  def damage_types
+    @damage_types = DndApiService.fetch("damage-types/#{params[:index]}")
+    render json: @damage_types
   end
 
-  private
-
-  def set_api_service
-    @api_service = DndApiService.new
-  end
-  
+  def conditions
+    @conditions = DndApiService.fetch("conditions/#{params[:index]}")
+    render json: @conditions
+  end  
 end

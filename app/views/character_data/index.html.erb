@@ -1,0 +1,206 @@
+<!-- app/views/character_data/index.html.erb -->
+
+<div class="container mx-auto p-8 bg-white custom-bg-opacity rounded shadow-lg mt-10 relative z-10">
+  <h1 class="text-3xl font-bold text-center mb-6">Character Data</h1>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 bg-blue-50 p-4 rounded">
+
+    <!-- Ability Scores Dropdown -->
+    <div class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+      <label for="ability_scores" class="font-bold">Ability Scores:</label>
+      <select id="ability_scores" name="ability_scores" onchange="fetchData('ability_scores', this.value)" class="block w-full p-2 bg-white border border-gray-300 rounded-md">
+        <option value="">Select an Ability Score</option>
+        <% %w[cha con dex int str wis].each do |score| %>
+          <option value="<%= score %>"><%= score.upcase %></option>
+        <% end %>
+      </select>
+      <div id="ability_scores_data" class="hidden mt-2 p-2 bg-gray-100 border rounded-md">
+        <!-- Fetched data will appear here -->
+      </div>
+    </div>
+
+    <!-- Skills Dropdown -->
+    <div class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+      <label for="skills" class="font-bold">Skills:</label>
+      <select id="skills" name="skills" onchange="fetchData('skills', this.value)" class="block w-full p-2 bg-white border border-gray-300 rounded-md">
+        <option value="">Select a Skill</option>
+        <% %w[acrobatics animal-handling arcana athletics deception history insight intimidation investigation medicine nature perception performance persuasion religion sleight-of-hand stealth survival].each do |skill| %>
+          <option value="<%= skill %>"><%= skill.humanize.titleize %></option>
+        <% end %>
+      </select>
+      <div id="skills_data" class="hidden mt-2 p-2 bg-gray-100 border rounded-md">
+        <!-- Fetched data will appear here -->
+      </div>
+    </div>
+
+    <!-- Proficiencies Dropdown-->
+    <div class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+      <label for="proficiencies" class="font-bold">Proficiencies:</label>
+      <select id="proficiencies" name="proficiencies" onchange="fetchData('proficiencies', this.value)" class="block w-full p-2 bg-white border border-gray-300 rounded-md">
+        <option value="">Select a Proficiency</option>
+        <% %w[armor weapons tools].each do |proficiency| %>
+          <option value="<%= proficiency %>"><%= proficiency.titleize %></option>
+        <% end %>
+      </select>
+      <div id="proficiencies_data" class="hidden mt-2 p-2 bg-gray-100 border rounded-md">
+        <!-- Fetched data will appear here -->
+      </div>
+    </div>
+
+    <!-- Languages Dropdown -->
+    <div class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+      <label for="languages" class="font-bold">Languages:</label>
+      <select id="languages" name="languages" onchange="fetchData('languages', this.value)" class="block w-full p-2 bg-white border border-gray-300 rounded-md">
+        <option value="">Select a Language</option>
+        <% %w[abyssal celestial common deep-speech draconic dwarvish elvish giant gnomish goblin halfling infernal orc primordial sylvan undercommon].each do |language| %>
+          <option value="<%= language %>"><%= language.humanize.titleize %></option>
+        <% end %>
+      </select>
+      <div id="languages_data" class="hidden mt-2 p-2 bg-gray-100 border rounded-md">
+        <!-- Fetched data will appear here -->
+      </div>
+    </div>
+
+    <!-- Alignments -->
+    <div class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+      <label for="alignments" class="font-bold">Alignments:</label>
+      <select id="alignments" name="alignments" onchange="fetchData('alignments', this.value)" class="block w-full p-2 bg-white border border-gray-300 rounded-md">
+        <option value="">Select an Alignment</option>
+        <% %w[chaotic-neutral chaotic-evil chaotic-good lawful-neutral lawful-evil lawful-good neutral neutral-evil neutral-good].each do |alignment| %>
+          <option value="<%= alignment %>"><%= alignment.humanize.titleize %></option>
+        <% end %>
+      </select>
+      <div id="alignments_data" class="hidden mt-2 p-2 bg-gray-100 border rounded-md">
+        <!-- Fetched data will appear here -->
+      </div>
+    </div>
+
+    <!-- Backgrounds Dropdown -->
+    <div class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+      <label for="backgrounds" class="font-bold">Backgrounds:</label>
+      <select id="backgrounds" name="backgrounds" onchange="fetchData('backgrounds', this.value)" class="block w-full p-2 bg-white border border-gray-300 rounded-md">
+        <option value="">Select a Background</option>
+        <% %w[acolyte].each do |background| %>
+          <option value="<%= background %>"><%= background.humanize %></option>
+        <% end %>
+      </select>
+      <div id="backgrounds_data" class="hidden mt-2 p-2 bg-gray-100 border rounded-md">
+        <!-- Fetched data will appear here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function fetchData(category, index) {
+    if (index === "") {
+      document.getElementById(`${category}_data`).innerHTML = '';
+      document.getElementById(`${category}_data`).classList.add('hidden');
+      return;
+    }
+
+    fetch(`/api/${category}/${index}`)
+      .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+      })
+      .then(data => {
+        document.getElementById(`${category}_data`).classList.remove('hidden');
+        const htmlContent = generateHtmlForData(data);
+        document.getElementById(`${category}_data`).innerHTML = htmlContent;
+      })
+      .catch(error => {
+        console.error('Fetch error:', error);
+        document.getElementById(`${category}_data`).innerHTML = 'Error fetching data.';
+      });
+  }
+
+  function generateHtmlForData(data) {
+    let html = '<div class="bg-white bg-opacity-75 p-4 shadow rounded-lg">';
+
+    html += data.full_name ? `<h2 class="text-xl font-bold">${data.full_name}</h2>` : `<h2 class="text-xl font-bold">${data.name}</h2>`;
+    
+    if (data.desc) {
+      data.desc.forEach(paragraph => {
+        html += `<p class="mt-2 text-gray-600">${paragraph}</p>`;
+      });
+    }
+
+    if (data.skills) {
+      html += '<div class="mt-4"><h3 class="font-semibold">Skills:</h3><ul class="list-disc list-inside">';
+      data.skills.forEach(skill => {
+        html += `<li>${skill.name}</li>`;
+      });
+      html += '</ul></div>';
+    }
+
+    if (data.type){
+      html += `<p>Type: ${data.type}</p>`;
+    }
+    
+    if (data.script){
+      html += `<p class="mt-2 text-gray-600">Script: ${data.script}</p>`;
+    }
+    if (data.typical_speakers){
+      html += `<p class="mt-2 text-gray-600">Typical Speakers: ${data.typical_speakers}</p>`;
+    }
+    if (data.starting_proficiencies){
+      data.starting_proficiencies.forEach(proficiency => {
+        html += `<h3 class="font-semibold">Starting Proficiencies: ${proficiency.name}</h3>`;
+      });
+    }
+
+if (data.personality_traits?.from?.options) {
+      html += '<div class="mt-4"><h3 class="font-semibold">Personality Traits:</h3><ul class="list-disc list-inside">';
+      data.personality_traits.from.options.forEach(trait => {
+        html += `<li>${trait.string}</li>`;
+      });
+      html += '</ul></div>';
+    }
+
+
+    if (data.ideals?.from?.options) {
+      html += '<div class="mt-4"><h3 class="font-semibold">Ideals:</h3><ul class="list-disc list-inside">';
+      data.ideals.from.options.forEach(ideal => {
+        html += `<li>${ideal.desc} (Alignments: ${ideal.alignments.map(a => a.name).join(', ')})</li>`;
+      });
+      html += '</ul></div>';
+    }
+
+    if (data.bonds?.from?.options) {
+      html += '<div class="mt-4"><h3 class="font-semibold">Bonds:</h3><ul class="list-disc list-inside">';
+      data.bonds.from.options.forEach(bond => {
+        html += `<li>${bond.string}</li>`;
+      });
+      html += '</ul></div>';
+    }
+
+    if (data.flaws?.from?.options) {
+      html += '<div class="mt-4"><h3 class="font-semibold">Flaws:</h3><ul class="list-disc list-inside">';
+      data.flaws.from.options.forEach(flaw => {
+        html += `<li>${flaw.string}</li>`;
+      });
+      html += '</ul></div>';
+    }
+
+
+    if (data.starting_equipment_options){
+      data.starting_equipment_options.forEach(option => {
+        html += `<h3 class="font-semibold">Starting Equipment Options: ${option.choose}</h3>`;
+      });
+    }
+    if (data.classes){
+      data.classes.forEach(classes => {
+        html += `<h3 class="font-semibold">Classes: ${classes.name}</h3>`;
+      });
+    }
+    if (data.races){
+      data.races.forEach(races => {
+        html += `<h3 class="font-semibold">Races: ${races.name}</h3>`;
+      });
+    }
+    if (data.abbreviation){
+      html += `<p class="mt-2 text-gray-600">Abbreviation: ${data.abbreviation}</p>`;
+    }
+    return html;
+  }
+</script>

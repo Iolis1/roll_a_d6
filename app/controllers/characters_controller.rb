@@ -1,11 +1,27 @@
 class CharactersController < ApplicationController
-  def new
-  end
+  # app/controllers/characters_controller.rb
 
-  def show
-  end
+def new
+  @character = Character.new
 
-  def edit
+end
+
+def edit
+  @character = Character.find(params[:id])
+  
+end
+
+def create
+  @character = Character.new(character_params)
+  if @character.save
+    redirect_to @character
+  else
+    render :new
   end
+end
+
+def show
+end
+
 
 end

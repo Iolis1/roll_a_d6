@@ -1,5 +1,9 @@
 class MonstersController < ApplicationController
   def show
-    @monster = DndApiService.fetch("monsters/#{params[:index]}")
+  end
+  
+  def monsters
+    @Monsters = DndApiService.fetch("monsters/#{params[:index]}")
+    render json: @Monsters
   end
 end

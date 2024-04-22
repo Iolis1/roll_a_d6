@@ -1,0 +1,84 @@
+<div class="container mx-auto p-8 bg-white custom-bg-opacity rounded shadow-lg mt-10 relative z-10">
+  <h1 class="text-3xl font-bold text-center mb-6">Game Mechanics</h1>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 bg-blue-50 p-4 rounded">
+
+  <!-- magic school Dropdown -->
+  <div class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+    <label for="magic_schools" class="font-bold">Magic School:</label>
+    <select id="magic_schools" name="magic_schools" onchange="fetchData('magic_schools', this.value)" class="block w-full p-2 bg-white border border-gray-300 rounded-md">
+      <option value="">Select a Magic School</option>
+      <% %w[abjuration conjuration divination enchantment evocation illusion necromancy transmutation].each do |school| %>
+        <option value="<%= school %>"><%= school.humanize.titleize %></option>
+      <% end %>
+    </select>
+    <div id="magic_schools_data" class="hidden mt-2 p-2 bg-gray-100 border rounded-md">
+      <!-- Fetched data will appear here -->
+    </div>
+  </div>
+
+  <!-- damage type dropdown -->
+  <div class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+    <label for="damage_types" class="font-bold">Damage Type:</label>
+    <select id="damage_types" name="damage_types" onchange="fetchData('damage_types', this.value)" class="block w-full p-2 bg-white border border-gray-300 rounded-md">
+      <option value="">Select a Damage Type</option>
+      <% %w[acid bludgeoning cold fire force lightning necrotic piercing poison psychic radiant slashing thunder].each do |type| %>
+        <option value="<%= type %>"><%= type.humanize.titleize %></option>
+      <% end %>
+    </select>
+    <div id="damage_type_data" class="hidden mt-2 p-2 bg-gray-100 border rounded-md">
+      <!-- Fetched data will appear here -->
+    </div>
+  </div>
+
+  <!-- conditions dropdown -->
+  <div class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+    <label for="conditions" class="font-bold">Conditions:</label>
+    <select id="conditions" name="conditions" onchange="fetchData('conditions', this.value)" class="block w-full p-2 bg-white border border-gray-300 rounded-md">
+      <option value="">Select a Condition</option>
+      <% %w[blinded charmed deafened exhaustion frightened grappled incapacitated invisible paralyzed petrified poisoned prone restrained stunned unconscious].each do |condition| %>
+        <option value="<%= condition %>"><%= condition.humanize.titleize %></option>
+      <% end %>
+    </select>
+    <div id="conditions_data" class="hidden mt-2 p-2 bg-gray-100 border rounded-md">
+      <!-- Fetched data will appear here -->
+    </div>
+  </div>
+
+  
+<script>
+  function fetchData(category, index) {
+    if (index === "") {
+      document.getElementById(`${category}_data`).innerHTML = '';
+      document.getElementById(`${category}_data`).classList.add('hidden');
+      return;
+    }
+
+    fetch(`/api/${category}/${index}`)
+      .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+      })
+      .then(data => {
+        document.getElementById(`${category}_data`).classList.remove('hidden');
+        const htmlContent = generateHtmlForData(data);
+        document.getElementById(`${category}_data`).innerHTML = htmlContent;
+      })
+      .catch(error => {
+        console.error('Fetch error:', error);
+        document.getElementById(`${category}_data`).innerHTML = 'Error fetching data.';
+      });
+  }
+
+  function generateHtmlForData(data){
+    let html = '<div class="bg-white bg-opacity-75 p-4 shadow rounded-lg">';
+
+    html += `<h2 class="text-xl font-bold">${data.name}</h2>`;
+
+    if (data.desc) {
+      data.desc.forEach(paragraph => {
+        html += `<p class="mt-2 text-gray-600">${paragraph}</p>`;
+      });
+    }
+  }
+</script>
+

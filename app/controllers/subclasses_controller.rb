@@ -1,5 +1,9 @@
 class SubclassesController < ApplicationController
   def show
-    @subclass = DndApiService.fetch("subclasses/#{params[:index]}")
+  end
+
+  def subclasses
+    @subclasses = DndApiService.fetch("subclasses/#{params[:index]}")
+    render json: @subclasses
   end
 end

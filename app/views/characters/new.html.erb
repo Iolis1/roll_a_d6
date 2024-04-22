@@ -1,5 +1,36 @@
+<!-- app/views/characters/new.html.erb -->
 
-<div>
-  <h1 class="font-bold text-4xl">Characters#new</h1>
-  <p>Find me in app/views/characters/new.html.erb</p>
-</div>
+<%= form_with model: @character, local: true, class: "bg-yellow-100 p-8 rounded shadow-lg max-w-4xl mx-auto my-10" do |form| %>
+  <h2 class="text-xl font-bold mb-5 text-center">Create Your Character</h2>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+    <!-- Race Dropdown -->
+    <div class="form-group">
+      <%= form.label :race_id, "Choose your race:", class: "block text-lg font-semibold" %>
+      <%= form.collection_select :race_id, @races, :id, :name, { prompt: "Select Race" }, { class: "form-select block w-full mt-1" } %>
+    </div>
+
+    <!-- Class Dropdown -->
+    <div class="form-group">
+      <%= form.label :class_id, "Choose your class:", class: "block text-lg font-semibold" %>
+      <%= form.collection_select :class_id, @classes, :id, :name, { prompt: "Select Class" }, { class: "form-select block w-full mt-1" } %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :level, "Level:", class: "block text-lg font-semibold" %>
+    <%= form.number_field :level, min: 1, max: 20, class: "form-input mt-1 block w-full" %>
+  </div>
+
+  <!-- Stats Section -->
+  <% ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'].each do |stat| %>
+    <div class="form-group">
+      <%= form.label stat, stat.capitalize + ":", class: "block text-lg font-semibold" %>
+      <%= form.number_field stat, min: 1, max: 30, class: "form-input mt-1 block w-full" %>
+    </div>
+  <% end %>
+
+  <div class="text-center mt-6">
+    <%= form.submit "Create Character", class: "btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+  </div>
+<% end %>
