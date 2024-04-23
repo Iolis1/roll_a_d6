@@ -71,5 +71,5 @@ end
 
 gem 'prawn'
 gem 'combine_pdf'
-
+gem "rdoc", ">= 6.6.3.1"
 gem "devise", "~> 4.9"
