@@ -5,7 +5,7 @@ Rails.application.routes.draw do
   get 'contact', to: 'static_pages#contact'
 
   # Use resourceful routes for characters
-  resources :characters, only: [:show, :new, :edit, :create, :update, :destroy]
+  resources :characters, only: [:show, :new, :edit, :create, :update, :destroy, :index]
   get 'api/races', to: 'characters#races'
   get 'api/classes', to: 'characters#classes'
   get 'characters/:id/download_character_sheet', to: 'characters#download_character_sheet', as: :download_character_sheet

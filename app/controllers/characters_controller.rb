@@ -30,14 +30,54 @@ def edit
 end
 
 
-def create
-  @character = Character.new(character_params)
-  if @character.save
-    redirect_to character_path(@character), notice: 'Character successfully created.'
+def update
+  @character = Character.find(params[:id])
+  total_points_added = character_params.values_at(:strength, :dexterity, :constitution, :intelligence, :wisdom, :charisma).map.with_index do |val, index|
+    val.to_i - @character.attributes.values_at("strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma")[index]
+  end.sum
+
+  if total_points_added > 3
+    flash.now[:alert] = "You can only add up to 3 points in total."
+    render :edit
+  elsif @character.update(character_params)
+    if params[:commit] == "Commit Points and Level Up"
+      level_up_character
+    end
+    redirect_to @character, notice: 'Character successfully updated and leveled up.'
   else
-    render :new, status: :unprocessable_entity
+    render :edit
   end
 end
+
+
+def index
+  @characters = Character.all
+end
+
+def create
+  @character = Character.new(character_params)
+  @character.user = current_user
+
+  respond_to do |format|
+    if @character.save
+      format.html { redirect_to @character, notice: 'Character was successfully created.' }
+      format.json { render :show, status: :created, location: @character }
+    else
+      format.html { render :new }
+      format.json { render json: @character.errors, status: :unprocessable_entity }
+    end
+  end
+end
+
+def destroy
+  @character = Character.find(params[:id])
+  @character.destroy!
+  respond_to do |format|
+    format.html { redirect_to characters_path, notice: 'Character successfully deleted.' }
+    format.json { head :no_content }
+  end
+end
+
 
 def show
   begin
@@ -52,7 +92,12 @@ end
 private
 
 def character_params
-  params.require(:character).permit(:name, :race, :class_name, :strength, :dexterity, :constitution, :intelligence, :wisdom, :charisma)
+  params.require(:character).permit(:name, :race, :char_class, :strength, :dexterity, :constitution, :intelligence, :wisdom, :charisma)
 end
 
+def level_up_character
+  if @character.level < 22
+    @character.increment!(:level)
+  end
+end
 end

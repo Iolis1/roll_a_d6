@@ -1,12 +1,14 @@
 <!-- app/views/characters/show.html.erb -->
 <div class="container mx-auto p-8 bg-white custom-bg-opacity rounded shadow-lg mt-10 relative z-10">
-  <h1 class="text-3xl font-bold text-center mb-6"><%= @character.name %> - Character Profile</h1>
+  <h1 class="text-3xl font-bold text-center mb-6">Character Profile For <%= @character.name %></h1>
 
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
     <div class="col-span-full md:col-span-1 bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
       <h2 class="text-lg font-bold">Basic Information</h2>
-      <p><strong>Race:</strong> <%= @character.race %></p>
-      <p><strong>Class:</strong> <%= @character.class_name %></p> <!-- Make sure this matches the database field -->
+      <p><strong>Race:</strong> <%= @character.race&.capitalize %></p>
+      <p><strong>Class:</strong> <%= @character.char_class&.capitalize %></p>
+      <p><strong>Level:</strong> <%= @character.level %></p>
+
     </div>
 
     <!-- Example attributes section, adjust field names as needed -->
@@ -22,9 +24,8 @@
   </div>
 
   <div class="text-center mt-6">
-    <a href="<%= edit_character_path(@character) %>" class="btn btn-primary">Edit Character</a>
-    <a href="<%= characters_path %>" class="btn btn-secondary">Back to List</a>
+    <a href="<%= edit_character_path(@character) %>" class="btn btn-primary bg-blue-500 text-white font-bold text-center rounded-md">Level Up</a>
+    <a href="<%= characters_path %>" class="btn btn-secondary bg-blue-500 text-white font-bold text-center rounded-md">Back to List</a>
   </div>
 </div>
 
-<%= link_to 'Download Character Sheet', download_character_sheet_character_path(@character), class: 'btn btn-info' %>

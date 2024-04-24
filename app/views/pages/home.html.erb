@@ -16,6 +16,15 @@ Choose your path wisely, for great stories await both the blade-wielder and the 
     <%= link_to 'Visit the D&D Codex', codex_index_path, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
   </div>
 
+  <p class="text-center font-bold text-lg mt-8 mb-8">If you've found your way here before and wish to continue your journey, you may view your character roster below.</p>
+  <div class="flex justify-center">
+  <a href="<%= characters_path %>" class="relative inline-block text-white font-bold text-center rounded-md py-2 px-4 overflow-hidden" style="background-image: url(<%= asset_path('characterRoster.jpg')%>); background-size: 100% 100%; background-position: center; width: 200px; height: 100px;">
+    <span class="relative z-10">Character Roster</span>
+    <div class="absolute inset-0 bg-black opacity-50"></div> <!-- Optional: darken background to enhance text visibility -->
+  </a>
+</div>
+
+
 
   <footer class="text-center mt-16">
     <small>&copy; <%= Time.current.year %> RollAD6. All rights reserved.</small>

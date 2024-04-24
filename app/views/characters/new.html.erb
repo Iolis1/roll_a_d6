@@ -9,13 +9,13 @@
     <!-- Character Name -->
     <div class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
       <label for="characterName" class="font-bold">Name:</label>
-      <input type="text" id="characterName" name="characterName" class="block w-full p-2 bg-white border border-gray-300 rounded-md">
+      <input type="text" id="characterName" name="character[name]" class="block w-full p-2 bg-white border border-gray-300 rounded-md">
     </div>
     
     <!-- Character Race -->
     <div class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
       <label for="characterRace" class="font-bold">Race:</label>
-      <select id="characterRace" name="characterRace" class="block w-full p-2 bg-white border border-gray-300 rounded-md">
+      <select id="characterRace" name="character[race]" class="block w-full p-2 bg-white border border-gray-300 rounded-md">
         <option value="">Select a Race</option>
         <% if @races.is_a?(Hash) && @races.key?('results') %>
           <% @races['results'].each do |race| %>
@@ -34,7 +34,7 @@
     <!-- Character Class -->
     <div class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
       <label for="characterClass" class="font-bold">Class:</label>
-      <select id="characterClass" name="characterClass" class="block w-full p-2 bg-white border border-gray-300 rounded-md">
+      <select id="characterClass" name="character[char_class]" class="block w-full p-2 bg-white border border-gray-300 rounded-md">
         <option value="">Select a Class</option>
         <% if @classes.is_a?(Hash) && @classes.key?('results') %>
           <% @classes['results'].each do |klass| %>
@@ -49,7 +49,6 @@
         <% end %>
       </select>
     </div>
-
     
     <div class="bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
       <label for="character_strength" class="font-bold">Strength:</label>
