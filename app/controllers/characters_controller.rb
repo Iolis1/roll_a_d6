@@ -25,6 +25,16 @@ def new
   @character = Character.new(strength: 15, dexterity: 14, constitution: 13, intelligence: 12, wisdom: 10, charisma: 8)
 end
 
+def classes
+  @classes = DndApiService.fetch("classes/#{params[:index]}")
+  render json: @classes
+end
+
+def races
+  @races = DndApiService.fetch("races/#{params[:index]}")
+  render json: @races
+end
+
 def edit
   @character = Character.find(params[:id])
 end

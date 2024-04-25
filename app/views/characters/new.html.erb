@@ -3,6 +3,16 @@
 <div class="container mx-auto p-8 bg-white custom-bg-opacity rounded shadow-lg mt-10 relative z-10">
   <h1 class="text-3xl font-bold text-center mb-6">Character Creation</h1>
   
+  <% if @character.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@character.errors.count, "error") %> prohibited this character from being saved:</h2>
+      <ul>
+      <% @character.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
   <!-- Character Creation Form -->
   <form id="characterForm" action="<%= characters_path %>" method="post" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
   <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
@@ -129,109 +139,4 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error('Error fetching data: ', error);
       });
   }
-
-  function fetchData(category, index) {
-    const detailsDiv = document.getElementById(`${category}_data`);
-    if (!detailsDiv) {
-      console.error(`Element with ID ${category}_data not found.`);
-      return;
-    }
-
-    if (index === "") {
-      detailsDiv.classList.add('hidden');
-      detailsDiv.innerHTML = '';
-      return;
-    }
-
-    fetch(`/api/${category}/${index}`)
-      .then(response => {
-        if (!response.ok) throw new Error(`Network response was not ok, status: ${response.status}`);
-        return response.json();
-      })
-      .then(data => {
-        detailsDiv.classList.remove('hidden');
-        const htmlContent = generateHtmlForData(data);
-        detailsDiv.innerHTML = htmlContent;
-      })
-      .catch(error => {
-        console.error('Fetch error:', error);
-        detailsDiv.innerHTML = `Error fetching data: ${error.message}`;
-    });
-  }
-
-function fetchData(category, index) {
-  const detailsDiv = document.getElementById(`${category}_data`);
-  if (!detailsDiv) {
-    console.error(`Element with ID ${category}_data not found.`);
-    return;
-  }
-
-  if (index === "") {
-    detailsDiv.classList.add('hidden');
-    detailsDiv.innerHTML = '';
-    return;
-  }
-
-  fetch(`/api/${category}/${index}`)
-    .then(response => {
-      if (!response.ok) throw new Error(`Network response was not ok, status: ${response.status}`);
-      return response.json();
-    })
-    .then(data => {
-      detailsDiv.classList.remove('hidden');
-      const htmlContent = generateHtmlForData(data);
-      detailsDiv.innerHTML = htmlContent;
-
-      populateStats(data);
-    })
-    .catch(error => {
-      console.error('Fetch error:', error);
-      detailsDiv.innerHTML = `Error fetching data: ${error.message}`;
-  });
-}
-
-function populateStats(classData) {
-  
-  const startingStats = calculateStartingStats(classData);
-
-  const statsDiv = document.getElementById('characterStats');
-  if (!statsDiv) {
-    console.error('Element with ID characterStats not found.');
-    return;
-  }
-
-  let htmlContent = '<h2 class="text-lg font-bold mb-2">Starting Stats:</h2>';
-  htmlContent += '<ul>';
-  for (const stat in startingStats) {
-    htmlContent += `<li><strong>${stat}:</strong> ${startingStats[stat]}</li>`;
-  }
-  htmlContent += '</ul>';
-
-  statsDiv.innerHTML = htmlContent;
-}
-
-function calculateStartingStats(classData) {
-
-  const startingStats = {
-    strength: 10,
-    dexterity: 10,
-    constitution: 10,
-    intelligence: 10,
-    wisdom: 10,
-    charisma: 10
-  };
-
-  return startingStats;
-}
-
-function populateCharacterForm(startingStats) {
-  // Implement logic to populate the character creation form with starting stats
-  // This will depend on the structure of your form and how you want to display the stats
-  // You'll need to select the appropriate form elements and set their values accordingly
-  // For example:
-  document.getElementById('strengthInput').value = startingStats.strength;
-  document.getElementById('dexterityInput').value = startingStats.dexterity;
-  // Repeat for other stats...
-}
-
 </script>

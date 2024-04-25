@@ -21,6 +21,14 @@
       <p><strong>Wisdom:</strong> <%= @character.wisdom %></p>
       <p><strong>Charisma:</strong> <%= @character.charisma %></p>
     </div>
+
+    <!-- Character race description and char_class Descriptions from API -->
+    <div class="col-span-full md:col-span-2 bg-white bg-opacity-75 p-4 border border-gray-200 rounded-md shadow">
+      <h2 class="text-lg font-bold">Character Descriptions</h2>
+      <div id="races_data" class="hidden"></div>
+      <div id="classes_data" class="hidden"></div>
+    </div>
+
   </div>
 
   <div class="text-center mt-6">
@@ -29,3 +37,81 @@
   </div>
 </div>
 
+<script>
+   document.addEventListener("DOMContentLoaded", function(){
+        console.log("Character race: ", '<%= @character.race %>');
+        console.log("Character class: ", '<%= @character.char_class %>');
+        fetchData('races', '<%= @character.race %>');
+        fetchData('classes', '<%= @character.char_class %>');
+        
+      });
+  function fetchData(category, index) {
+    if (index === "") {
+      document.getElementById(`${category}_data`).innerHTML = '';
+      document.getElementById(`${category}_data`).classList.add('hidden');
+      return;
+    }
+
+    fetch(`/api/${category}/${index}`)
+      .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+      })
+      .then(data => {
+        document.getElementById(`${category}_data`).classList.remove('hidden');
+        const htmlContent = generateHtmlForData(data);
+        document.getElementById(`${category}_data`).innerHTML = htmlContent;
+      })
+      .catch(error => {
+        console.error('Fetch error:', error);
+        document.getElementById(`${category}_data`).innerHTML = 'Error fetching data.';
+      });
+  }
+
+  function generateHtmlForData(data) {
+  let htmlContent = '';
+  for (const key in data) {
+    if (data.hasOwnProperty(key)) {
+      // Skip URL/URI keys and others as needed
+      if (key.toLowerCase().includes('url') || key.toLowerCase().includes('uri') || key.toLowerCase().includes('index') || key.toLowerCase().includes('id')) {
+        continue;
+      }
+
+      // Check if the value exists and is not null or undefined
+      if (data[key] !== null && data[key] !== undefined) {
+        // Check if the value is an array
+        if (Array.isArray(data[key])) {
+          if (data[key].length > 0) {
+            htmlContent += `<p><strong>${key.toUpperCase()}:</strong></p>`;
+            htmlContent += '<ul>';
+            data[key].forEach(item => {
+              // Handle nested objects or arrays recursively
+              if (typeof item === 'object') {
+                htmlContent += '<li>';
+                htmlContent += generateHtmlForData(item);
+                htmlContent += '</li>';
+              } else {
+                htmlContent += `<li>${item}</li>`;
+              }
+            });
+            htmlContent += '</ul>';
+          }
+        } else if (typeof data[key] === 'object') {
+          // Check if the object has properties
+          if (Object.keys(data[key]).length > 0) {
+            // Handle nested objects recursively
+            htmlContent += `<p><strong>${key.toUpperCase()}:</strong></p>`;
+            htmlContent += generateHtmlForData(data[key]);
+          }
+        } else {
+          // Check if the value is not an empty string
+          if (data[key] !== '') {
+            htmlContent += `<p><strong>${key.toUpperCase()}:</strong> ${data[key]}</p>`;
+          }
+        }
+      }
+    }
+  }
+  return htmlContent;
+}
+</script>
